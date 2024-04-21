@@ -1,14 +1,16 @@
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const passport = require('passport');
 const register = require('./controllers/register');
 const login = require('./controllers/login');
 const logout = require('./controllers/logout');
 const verifyToken = require('./middleware/verifyToken');
-const passport = require('passport');
+const loginGoogle = require("./controllers/auth");
+
 require("./controllers/auth");
 const dotenv = require('dotenv');
-const isLoggedIn = require('./middleware/isLoggedIn');
+
 dotenv.config();
 
 const app = express();
@@ -27,12 +29,8 @@ app.use(passport.session());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
-app.get('/', isLoggedIn, (req, res) => {
-    res.send(`Hello ${req.user.email}!`);
-});
-
-app.get('/failure', (req, res) => {
-    res.send('Gagal login');
+app.get('/', verifyToken, (req, res) => {
+    res.send(`Hello ${req.userId}`);
 });
 
 app.post('/register', register);
@@ -45,17 +43,19 @@ app.get('/auth/google',
 );
 app.get('/auth/google/secrets',
     passport.authenticate('google', {
-        successRedirect: "/",
-        failureRedirect: "/failure"
-    })
+        failureRedirect: "/auth/google"
+    }),
+    loginGoogle
 );
+
 app.get('/logout', (req, res) => {
+    res.clearCookie('token');
     req.logout(function (err) {
         if (err) {
           return next(err);
         }
         req.session.destroy();
-        res.send(`Logout berhasil`); 
+        return res.sendStatus(200);
       });
 });
 
