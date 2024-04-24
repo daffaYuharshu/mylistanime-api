@@ -10,6 +10,11 @@ const loginGoogle = require("./controllers/auth");
 
 require("./controllers/auth");
 const dotenv = require('dotenv');
+const addAnime = require('./controllers/addAnime');
+const getAllAnime = require('./controllers/getAllAnime');
+const getAnimeById = require('./controllers/getAnimeById');
+const updateAnimeById = require('./controllers/updateAnimeById');
+const deleteAnimeById = require('./controllers/deleteAnimeById');
 
 dotenv.config();
 
@@ -58,6 +63,13 @@ app.get('/logout', (req, res) => {
         return res.sendStatus(200);
       });
 });
+
+
+app.post('/animes', verifyToken, addAnime);
+app.get('/animes', verifyToken, getAllAnime);
+app.get('/animes/:id', verifyToken, getAnimeById);
+app.patch('/animes/:id', verifyToken, updateAnimeById);
+app.delete('/animes/:id', verifyToken, deleteAnimeById);
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
