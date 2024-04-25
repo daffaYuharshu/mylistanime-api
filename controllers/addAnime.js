@@ -15,6 +15,14 @@ const addAnime = async (req, res) => {
                 q: title
             }
         });
+
+        if(result.data.data.length === 0){
+            return res.status(404).send({
+                error: true,
+                message: "Anime tidak ditemukan"
+            })
+        }
+
         const data = result.data.data[0];
         title = data.title;
         const genres = data.genres.map((genre) => genre.name).join(", ");
