@@ -15,6 +15,7 @@ const getAllAnime = require('./controllers/getAllAnime');
 const getAnimeById = require('./controllers/getAnimeById');
 const updateAnimeById = require('./controllers/updateAnimeById');
 const deleteAnimeById = require('./controllers/deleteAnimeById');
+const sortAnimeByRating = require('./controllers/sortAnimeByRating');
 
 dotenv.config();
 // test git
@@ -70,6 +71,7 @@ app.get('/animes', verifyToken, getAllAnime);
 app.get('/animes/:id', verifyToken, getAnimeById);
 app.patch('/animes/:id', verifyToken, updateAnimeById);
 app.delete('/animes/:id', verifyToken, deleteAnimeById);
+app.get(`/animes/sort`, verifyToken, sortAnimeByRating);
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
