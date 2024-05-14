@@ -1,22 +1,38 @@
+const { PrismaClient } = require("@prisma/client");
 const bcrypt = require('bcrypt');
-const db = require('../database/database');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const prisma = new PrismaClient();
 
 const login = async (req, res) => {
     const { email, password } = req.body;
+    if (!email|| !password) {
+        return res.status(400).send({
+          error: "true",
+          message: "Email atau password kosong",
+        });
+    }
+
     try {
-        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-        if(checkResult.rows.length === 0){
+        const checkResult = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+        if(!checkResult){
             return res.status(400).send({
                 error: true,
                 message: "Email atau password salah"
             })
-        } else {
-            const userPassword = checkResult.rows[0].password;
+        }else{
+            const userPassword = checkResult.password;
             const correctPassword = await bcrypt.compare(
                 password,
                 userPassword
             )
+           
             if(!correctPassword){
                 return res.status(400).send({
                     error: true,
@@ -24,11 +40,11 @@ const login = async (req, res) => {
                 })
             }
 
-            const userId = checkResult.rows[0].id;
-            const userEmail = checkResult.rows[0].email;
+            const userId = checkResult.id;
+            const userEmail = checkResult.email;
             
             const token = jwt.sign({userId, userEmail}, process.env.MY_SECRET, { expiresIn: "1h" });
-
+            
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true
@@ -44,12 +60,16 @@ const login = async (req, res) => {
                 }
             });
         }
+        
     } catch (error) {
         return res.status(500).send({
             error: true,
             message: error.message
         })
+    } finally {
+        await prisma.$disconnect();
     }
+    
 };
 
 module.exports = login;
