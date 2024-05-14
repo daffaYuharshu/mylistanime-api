@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "MyAnime" ALTER COLUMN "episodes" DROP NOT NULL,
+ALTER COLUMN "year" DROP NOT NULL;
