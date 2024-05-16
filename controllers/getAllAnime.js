@@ -1,29 +1,34 @@
-// const db = require('../database/database');
+const { PrismaClient } = require("@prisma/client");
 
-// const getAllAnime = async (req, res) => {
-//     const userId = req.userId;
+const prisma = new PrismaClient();
 
-//     if(!userId) return res.status(401);
+const getAllAnime = async (req, res) => {
+    const userId = req.userId;
 
-//     try {
-//         const animes = await db.query("SELECT * FROM my_animes WHERE user_id = $1", [userId]);
-//         const data = animes.rows;
+    if(!userId) return res.status(401);
 
-//         if(data.length === 0){
-//             return res.status(404).send({
-//                 error: true,
-//                 message: "Anime belum ditambahkan"
-//             })
-//         }
+    try {
+        const animes = await prisma.myAnime.findMany({
+            where: {
+                userId: userId
+            }
+        });
 
-//         return res.status(200).send(data);
-//     } catch (error) {
-//         return res.status(500).send({
-//             error: true,
-//             message: error.message
-//         })
-//     }
+        // if(animes.length === 0){
+        //     return res.status(404).send({
+        //         error: true,
+        //         message: "Anime belum ditambahkan"
+        //     })
+        // }
 
-// };
+        return res.status(200).send(animes);
+    } catch (error) {
+        return res.status(500).send({
+            error: true,
+            message: error.message
+        })
+    }
 
-// module.exports = getAllAnime;
+};
+
+module.exports = getAllAnime;

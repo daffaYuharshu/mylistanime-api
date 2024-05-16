@@ -67,10 +67,10 @@ app.delete('/logout', verifyToken, logout);
 
 
 app.post('/animes', verifyToken, addAnime);
-// app.get('/animes', verifyToken, getAllAnime);
-// app.get('/animes/:id', verifyToken, getAnimeById);
-// app.patch('/animes/:id', verifyToken, updateAnimeById);
-// app.delete('/animes/:id', verifyToken, deleteAnimeById);
+app.get('/animes', verifyToken, getAllAnime);
+app.get('/animes/:id', verifyToken, getAnimeById);
+app.patch('/animes/:id', verifyToken, updateAnimeById);
+app.delete('/animes/:id', verifyToken, deleteAnimeById);
 // app.get(`/animes/sort`, verifyToken, sortAnimeByRating);
 
 app.listen(port, () => {

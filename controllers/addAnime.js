@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 const addAnime = async (req, res) => {
     let { title, rating, review } = req.body;
-        const userId = req.userId;
+    const userId = req.userId;
     
-        if(!userId) return res.status(401);
+    if(!userId) return res.status(401);
 
     try {
         const result = await axios.get(URL, {
