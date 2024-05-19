@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
     }
 })
 
-router.delete("/logout",  verifyToken,async (req, res) => {
+router.delete("/logout",  verifyToken, async (req, res) => {
     const token = req.cookies.token;
     if(!token) return res.status(204);
     res.clearCookie("token");
