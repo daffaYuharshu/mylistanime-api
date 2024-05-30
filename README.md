@@ -1,6 +1,6 @@
 # MyListAnime-API
 
-This is MyListAnime API application built using Node.js. Make sure you have already installed Node.js in your system.
+This is MyListAnime API application built using Node.js(v18.8.0). Make sure you have already installed Node.js in your system.
 This service using PostgreSQL as the database, so you need to install PostgreSQL and create database "mylistanime" in PgAdmin4.
 
 ## How to run this Application
