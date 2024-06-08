@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser')
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
@@ -16,7 +17,7 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(
     session({
       secret: process.env.SESSION_SECRET,
@@ -28,7 +29,7 @@ app.use(
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 // app.get('/', verifyToken, (req, res) => {
@@ -65,5 +66,3 @@ app.use("/animes", verifyToken, routerAnime);
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
-
-module.exports = app;
