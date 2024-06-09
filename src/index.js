@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
@@ -15,6 +16,8 @@ dotenv.config();
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 app.use(express.json());
 app.use(
