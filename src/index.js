@@ -6,6 +6,7 @@ const cors = require('cors');
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
 const routerUser = require("./controllers/user-controller");
+const routerReview = require("./controllers/review-controller");
 // const passport = require('passport');
 // const loginGoogle = require("./controllers/auth");
 
@@ -64,6 +65,7 @@ app.use(cookieParser());
 
 app.use("/", routerUser);
 app.use("/animes", verifyToken, routerAnime);
+app.use("/",routerReview)
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
