@@ -9,9 +9,10 @@ const findUser = async (email) => {
     return user;
 }
 
-const insertUser = async (email, hash) => {
+const insertUser = async (username, email, hash) => {
     await prisma.user.create({
         data: {
+            username: username,
             email: email,
             password: hash
         }

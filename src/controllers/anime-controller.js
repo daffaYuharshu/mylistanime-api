@@ -1,11 +1,26 @@
 const express = require("express");
 const prisma = require("../database/prisma");
-const { addAnime, getAllAnime, getJikanAnime, getAnimeById, updateAnimeById, deleteAnimeById } = require("../services/anime-service");
+const verifyToken = require("../middleware/verifyToken");
+const { addAnime, getAllAnime, getJikanAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview } = require("../services/anime-service");
 
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.get("/reviews", async (req, res) => {
+    try {
+        const animes = await getAllAnimeReview();
+        return res.status(200).send(animes);
+    } catch (error) {
+        return res.status(500).send({
+            error: true,
+            message: error.message
+        })
+    } finally {
+        await prisma.$disconnect();
+    }
+});
+
+router.post("/", verifyToken, async (req, res) => {
     let { title, rating, review } = req.body;
     const userId = req.userId;
     if(!userId) return res.status(401);
@@ -31,7 +46,7 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
     const userId = req.userId;
 
     if(!userId) return res.status(401);
@@ -49,7 +64,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
     const userId = req.userId;
     const animeId = parseInt(req.params.id);
     
@@ -68,7 +83,7 @@ router.get("/:id", async (req, res) => {
     }
 })
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", verifyToken, async (req, res) => {
     const userId = req.userId;
     const animeId = parseInt(req.params.id);
     const { rating, review } = req.body;
@@ -91,7 +106,7 @@ router.patch("/:id", async (req, res) => {
     }
 })
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
     const userId = req.userId;
     const animeId = parseInt(req.params.id);
 

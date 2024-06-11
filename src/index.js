@@ -1,12 +1,9 @@
 const express = require('express');
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
 const routerUser = require("./controllers/user-controller");
-const routerReview = require("./controllers/review-controller");
 // const passport = require('passport');
 // const loginGoogle = require("./controllers/auth");
 
@@ -21,19 +18,11 @@ const port = 3000;
 app.use(cors());
 
 app.use(express.json());
-app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: true,
-    })
-);
 
 // app.use(passport.initialize());
 // app.use(passport.session());
 
 app.use(express.urlencoded({extended: true}));
-app.use(cookieParser());
 
 // app.get('/', verifyToken, (req, res) => {
 //     res.send(`Hello ${req.userId}`);
@@ -64,8 +53,7 @@ app.use(cookieParser());
 // });
 
 app.use("/", routerUser);
-app.use("/animes", verifyToken, routerAnime);
-app.use("/",routerReview)
+app.use("/animes", routerAnime);
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);

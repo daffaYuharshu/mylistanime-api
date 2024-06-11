@@ -83,4 +83,17 @@ const removeAnimeById = async (animeId) => {
     })
 }
 
-module.exports = { findJikanAnime, findExistingAnime, insertAnime, findAllAnime, findAnimeById, editAnimeById, removeAnimeById };
+const findAllAnimeReview = async () => {
+    const animes = await prisma.myAnime.findMany({
+        include: {
+            user: {
+                select: {
+                    username: true
+                }
+            }
+        },
+    });
+    return animes;
+}
+
+module.exports = { findJikanAnime, findExistingAnime, insertAnime, findAllAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview };

@@ -4,17 +4,16 @@ dotenv.config();
 
 const verifyToken = async (req, res, next) => {
     try {
-        let token = req.cookies.token; 
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1]; 
         if(!token){
             return res.sendStatus(401);
-        }else{
-            const user = jwt.verify(token, process.env.MY_SECRET);
-            // console.log(user);
-            req.userId = user.userId;
-            next();
         }
+        const user = jwt.verify(token, process.env.MY_SECRET);
+        req.userId = user.userId;
+        next();
+        
     } catch (error) {
-        res.clearCookie("token");
         return res.status(500).send({
             error: true,
             message: error.message

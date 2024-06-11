@@ -1,4 +1,4 @@
-const { findExistingAnime, insertAnime, findAllAnime, findJikanAnime, findAnimeById, editAnimeById, removeAnimeById } = require("../repositories/anime-repository");
+const { findExistingAnime, insertAnime, findAllAnime, findJikanAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview } = require("../repositories/anime-repository");
 
 const getJikanAnime = async (title) => {
     const anime = await findJikanAnime(title);
@@ -54,4 +54,9 @@ const deleteAnimeById = async (animeId, userId) => {
     await removeAnimeById(animeId);
 }
 
-module.exports = { getJikanAnime, addAnime, getAllAnime, getAnimeById, updateAnimeById, deleteAnimeById };
+const getAllAnimeReview = async () => {
+    const animes = await findAllAnimeReview();
+    return animes;
+}
+
+module.exports = { getJikanAnime, addAnime, getAllAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview };

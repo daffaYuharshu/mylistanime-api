@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const { findUser, insertUser } = require('../repositories/user-repository');
 
-const register = async (email, password) => {
+const register = async (username, email, password) => {
     const user = await findUser(email);
     
     if(user){
@@ -15,7 +15,7 @@ const register = async (email, password) => {
             if(err){
                 throw Error("Error hashing password");
             }else{
-                await insertUser(email, hash)
+                await insertUser(username, email, hash)
             }
         })
 
@@ -25,7 +25,7 @@ const register = async (email, password) => {
 const login = async (email, password) => {
     const user = await findUser(email);
     if(!user){
-        throw Error("Email atau password salah");
+        throw Error("Email belum terdaftar");
     }
 
     const userPassword = user.password;
@@ -35,7 +35,7 @@ const login = async (email, password) => {
     )
 
     if(!correctPassword){
-        throw Error("Email atau password salah");
+        throw Error("Password salah");
     }
 
     const userId = user.id;
