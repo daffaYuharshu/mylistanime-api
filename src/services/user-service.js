@@ -39,12 +39,14 @@ const login = async (email, password) => {
     }
 
     const userId = user.id;
+    const username = user.username;
     const userEmail = user.email;
 
     const token = jwt.sign({userId, userEmail}, process.env.MY_SECRET, { expiresIn: "1h" });
 
     const loginInfo = {
         id: userId,
+        username: username,
         email: userEmail,
         token: token
     }
