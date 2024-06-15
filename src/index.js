@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const FileUpload = require("express-fileupload");
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
@@ -23,7 +24,8 @@ app.use(express.json());
 // app.use(passport.session());
 
 app.use(express.urlencoded({extended: true}));
-
+app.use(FileUpload());
+app.use(express.static("public"));
 // app.get('/', verifyToken, (req, res) => {
 //     res.send(`Hello ${req.userId}`);
 // });

@@ -5,6 +5,7 @@ dotenv.config();
 
 const { register, login } = require("../services/user-service");
 const verifyToken = require("../middleware/verifyToken");
+const { use } = require("passport");
 
 const router = express.Router();
 
@@ -66,4 +67,71 @@ router.delete("/logout",  verifyToken, async (req, res) => {
     return res.sendStatus(200);
 })
 
+router.get("/profile", async (req, res) =>{
+    const username = req.query.username;
+    try {
+        const user = await prisma.user.findUnique({
+            where :{
+                username : username 
+            }
+        }) 
+        if (!user){
+            return res.status(404).send({
+                error: true,
+                message: "user not found"
+            })
+        }
+        return res.status(200).send({
+            error: false,
+            user: user
+            
+        });
+        
+    } catch (error) {
+        return res.status(500).send({
+            error: true,
+            message: error.message
+        })
+        
+    }finally {
+        await prisma.$disconnect();
+    }
+    
+})
+const edit = async (desc, photo) => {
+    
+
+   
+    await prisma.user.update({
+        data: {
+            description: desc,
+            photo: photo
+        },
+    });
+};
+router.post("/profile/edit", verifyToken, async(req,res)=>{
+    const desc = req.body.desc;
+    const photo = req.files;
+    if (!desc) {
+        return res.status(400).send({
+          error: "true",
+          message: "Deskripsi belum diisi",
+        });
+    }
+    try {
+        await edit(desc, photo);
+        return res.status(201).send({
+            error: false,
+            message: "Profil berhasil dibuat"
+        })
+    } catch (error) {
+        return res.status(500).send({
+            error: true,
+            message: error.message
+        })
+    } finally {
+        await prisma.$disconnect();
+    }
+
+})
 module.exports = router;
