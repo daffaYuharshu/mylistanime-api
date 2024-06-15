@@ -1,4 +1,4 @@
-const { findExistingAnime, insertAnime, findAllAnime, findJikanAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview } = require("../repositories/anime-repository");
+const { findExistingAnime, insertAnime, findAllAnime, findJikanAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview, findAllAnimeReviewByTitle } = require("../repositories/anime-repository");
 
 const getJikanAnime = async (title) => {
     const anime = await findJikanAnime(title);
@@ -59,4 +59,14 @@ const getAllAnimeReview = async () => {
     return animes;
 }
 
-module.exports = { getJikanAnime, addAnime, getAllAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview };
+const getAllAnimeReviewByTitle = async (title) => {
+    const animes = await findAllAnimeReviewByTitle(title);
+    
+    if(!title){
+        throw Error("Review tidak ditemukan");
+    }
+    
+    return animes
+}
+
+module.exports = { getJikanAnime, addAnime, getAllAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview, getAllAnimeReviewByTitle };

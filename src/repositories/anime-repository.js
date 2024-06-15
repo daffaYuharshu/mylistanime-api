@@ -96,4 +96,20 @@ const findAllAnimeReview = async () => {
     return animes;
 }
 
-module.exports = { findJikanAnime, findExistingAnime, insertAnime, findAllAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview };
+const findAllAnimeReviewByTitle = async (title) => {
+    const animes = await prisma.myAnime.findMany({
+        where: {
+            title : title
+        },
+        include: {
+            user: {
+                select: {
+                    username: true
+                }
+            }
+        },
+    })
+    return animes;
+}
+
+module.exports = { findJikanAnime, findExistingAnime, insertAnime, findAllAnime, findAnimeById, editAnimeById, removeAnimeById, findAllAnimeReview, findAllAnimeReviewByTitle };

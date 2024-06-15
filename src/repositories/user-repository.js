@@ -19,4 +19,5 @@ const insertUser = async (username, email, hash) => {
     })
 }
 
+
 module.exports = { findUser, insertUser };

@@ -1,14 +1,17 @@
 const express = require("express");
 const prisma = require("../database/prisma");
 const verifyToken = require("../middleware/verifyToken");
-const { addAnime, getAllAnime, getJikanAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview } = require("../services/anime-service");
+const { addAnime, getAllAnime, getJikanAnime, getAnimeById, updateAnimeById, deleteAnimeById, getAllAnimeReview, getAllAnimeReviewByTitle } = require("../services/anime-service");
 
 
 const router = express.Router();
 
 router.get("/reviews", async (req, res) => {
+    const title = req.query.title;
+    
     try {
-        const animes = await getAllAnimeReview();
+        const animes = title ? await getAllAnimeReviewByTitle(title) : await getAllAnimeReview();
+        console.log(title)
         return res.status(200).send(animes);
     } catch (error) {
         return res.status(500).send({
@@ -19,6 +22,7 @@ router.get("/reviews", async (req, res) => {
         await prisma.$disconnect();
     }
 });
+
 
 router.post("/", verifyToken, async (req, res) => {
     let { title, rating, review } = req.body;
