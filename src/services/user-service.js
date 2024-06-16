@@ -89,7 +89,14 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
 
 const uploadImage = (image, imageName) => {
     return new Promise((resolve, reject) => {
-        const uploadPath = `public/images/${imageName}`;
+        const uploadPath = path.resolve(__dirname, `../public/images/${imageName}`);
+        
+        // Pastikan direktori ada sebelum menyimpan file
+        const dirPath = path.dirname(uploadPath);
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
+        
         image.mv(uploadPath, (err) => {
         if (err) {
             reject(err);
