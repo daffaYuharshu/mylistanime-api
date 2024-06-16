@@ -89,7 +89,7 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
 
 const uploadImage = (image, imageName) => {
     return new Promise((resolve, reject) => {
-        const uploadPath = `./public/images/${imageName}`;
+        const uploadPath = `public/images/${imageName}`;
         image.mv(uploadPath, (err) => {
         if (err) {
             reject(err);
