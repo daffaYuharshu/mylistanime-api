@@ -1,9 +1,18 @@
 const prisma = require("../database/prisma");
 
-const findUser = async (email) => {
+const findUserByEmail = async (email) => {
     const user = await prisma.user.findUnique({
         where:{
             email: email
+        }
+    })
+    return user;
+}
+
+const findUserByUsername = async (username) => {
+    const user = await prisma.user.findUnique({
+        where:{
+            username: username
         }
     })
     return user;
@@ -19,5 +28,36 @@ const insertUser = async (username, email, hash) => {
     })
 }
 
+const findUserProfile = async (username) => {
+    const user = await prisma.user.findUnique({
+        where :{
+            username : username 
+        }
+    }) 
+    return user;
+}
 
-module.exports = { findUser, insertUser };
+const editUserProfileWithImage = async (userId, data) => {
+    await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: {
+            image: data.urlImage,
+            desc: data.desc
+        }
+    })
+}
+
+const editUserProfileWithoutImage = async (userId, desc) => {
+    await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: {
+            desc: desc
+        }
+    })
+}
+
+module.exports = { findUserByEmail, findUserByUsername, insertUser, findUserProfile, editUserProfileWithImage, editUserProfileWithoutImage };

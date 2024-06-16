@@ -3,7 +3,7 @@ const prisma = require("../database/prisma");
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { register, login } = require("../services/user-service");
+const { register, login, getUserProfile, updateUserProfileWithImage, updateUserProfileWithoutImage } = require("../services/user-service");
 const verifyToken = require("../middleware/verifyToken");
 const { use } = require("passport");
 
@@ -67,26 +67,15 @@ router.delete("/logout",  verifyToken, async (req, res) => {
     return res.sendStatus(200);
 })
 
-router.get("/profile", async (req, res) =>{
-    const username = req.query.username;
+router.get("/profile/:username", async (req, res) =>{
+    const { username } = req.params;
     try {
-        const user = await prisma.user.findUnique({
-            where :{
-                username : username 
-            }
-        }) 
-        if (!user){
-            return res.status(404).send({
-                error: true,
-                message: "user not found"
-            })
-        }
+        const user = await getUserProfile(username);
         return res.status(200).send({
             error: false,
             user: user
             
         });
-        
     } catch (error) {
         return res.status(500).send({
             error: true,
@@ -96,34 +85,34 @@ router.get("/profile", async (req, res) =>{
     }finally {
         await prisma.$disconnect();
     }
-    
 })
-const edit = async (desc, photo) => {
-    
 
-   
-    await prisma.user.update({
-        data: {
-            description: desc,
-            photo: photo
-        },
-    });
-};
-router.post("/profile/edit", verifyToken, async(req,res)=>{
-    const desc = req.body.desc;
-    const photo = req.files;
-    if (!desc) {
-        return res.status(400).send({
-          error: "true",
-          message: "Deskripsi belum diisi",
-        });
+router.patch("/profile/edit", verifyToken, async (req, res) => {
+    const userId = req.userId;
+    if(!userId) return res.status(401);
+
+    const { desc } = req.body;
+    
+    if(req.files) {
+        const { image } = req.files;
+        try {
+            await updateUserProfileWithImage(userId, image, desc, req, res);
+        } catch (error) {
+            return res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        } finally {
+            await prisma.$disconnect();
+        }
     }
+    
     try {
-        await edit(desc, photo);
-        return res.status(201).send({
+        await updateUserProfileWithoutImage(userId, desc);
+        return res.status(200).send({
             error: false,
-            message: "Profil berhasil dibuat"
-        })
+            message: "Profil berhasil diperbarui" 
+        });
     } catch (error) {
         return res.status(500).send({
             error: true,
@@ -132,6 +121,6 @@ router.post("/profile/edit", verifyToken, async(req,res)=>{
     } finally {
         await prisma.$disconnect();
     }
-
 })
+
 module.exports = router;

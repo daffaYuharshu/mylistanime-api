@@ -1,14 +1,19 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const path = require("path");
+const fs = require("fs");
 dotenv.config();
-const { findUser, insertUser } = require('../repositories/user-repository');
+const { findUserByEmail, findUserByUsername, insertUser, findUserProfile, editUserProfileWithImage, editUserProfileWithoutImage } = require('../repositories/user-repository');
 
 const register = async (username, email, password) => {
-    const user = await findUser(email);
-    
-    if(user){
+    const emailIsExist = await findUserByEmail(email);
+    const usernameIsExist = await findUserByUsername(username);
+
+    if(emailIsExist){
         throw Error("Email telah terdaftar");
+    } else if (usernameIsExist) {
+        throw Error("Username telah digunakan");
     }else{
         const saltRounds = 10;
         bcrypt.hash(password, saltRounds, async(err, hash) => {
@@ -23,7 +28,7 @@ const register = async (username, email, password) => {
 }
 
 const login = async (email, password) => {
-    const user = await findUser(email);
+    const user = await findUserByEmail(email);
     if(!user){
         throw Error("Email belum terdaftar");
     }
@@ -55,4 +60,55 @@ const login = async (email, password) => {
     
 }
 
-module.exports = { register, login };
+const getUserProfile = async (username) => {
+    const user = await findUserProfile(username);
+    if (!user){
+        throw Error("Profil tidak ditemukan")
+    }
+    return user;
+}
+
+const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
+    const imageSize = image.data.length;
+    const extImage = path.extname(image.name);
+    const imageName = image.md5 + extImage;
+    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
+    const allowedType = [".png", ".jpg", ".jpeg"];
+
+    if(!allowedType.includes(extImage.toLowerCase())) {
+        throw Error("Ext gambar tidak valid");
+    }
+
+    if(imageSize > 1000000){
+        throw Error("Gambar harus kurang dari 1 MB");
+    }
+
+    await uploadImage(image, imageName);
+    await editUserProfileWithImage(userId, {urlImage, desc})
+}
+
+const uploadImage = (image, imageName) => {
+    return new Promise((resolve, reject) => {
+        const uploadPath = `./public/images/${imageName}`;
+        image.mv(uploadPath, (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            // Check if file exists after upload
+            fs.access(uploadPath, fs.constants.F_OK, (err) => {
+            if (err) {
+                reject(new Error('File not found after upload'));
+            } else {
+                resolve();
+            }
+            });
+        }
+        });
+    });
+};
+
+const updateUserProfileWithoutImage = async (userId, desc) => {
+    await editUserProfileWithoutImage(userId, desc);
+}
+
+module.exports = { register, login, getUserProfile, updateUserProfileWithImage, updateUserProfileWithoutImage };

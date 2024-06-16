@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const FileUpload = require("express-fileupload");
+const fs = require("fs");
+const path = require("path");
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
@@ -26,6 +28,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(FileUpload());
 app.use(express.static("public"));
+
+const imagesDir = path.join(__dirname, "public", "images");
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+}
 // app.get('/', verifyToken, (req, res) => {
 //     res.send(`Hello ${req.userId}`);
 // });

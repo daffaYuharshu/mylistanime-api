@@ -11,7 +11,6 @@ router.get("/reviews", async (req, res) => {
     
     try {
         const animes = title ? await getAllAnimeReviewByTitle(title) : await getAllAnimeReview();
-        console.log(title)
         return res.status(200).send(animes);
     } catch (error) {
         return res.status(500).send({
@@ -99,7 +98,7 @@ router.patch("/:id", verifyToken, async (req, res) => {
         return res.status(200).send({
             error: false,
             message: "Rating/review anime berhasil diubah" 
-         });
+        });
     } catch (error) {
         return res.status(500).send({
             error: true,
