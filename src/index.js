@@ -29,7 +29,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(FileUpload());
 app.use(express.static("public"));
 
-const imagesDir = path.join(__dirname, "public", "images");
+const imagesDir = path.resolve(__dirname, "public", "images");
 if (!fs.existsSync(imagesDir)) {
   fs.mkdirSync(imagesDir, { recursive: true });
 }
