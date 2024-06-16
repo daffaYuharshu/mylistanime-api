@@ -32,6 +32,13 @@ const findUserProfile = async (username) => {
     const user = await prisma.user.findUnique({
         where :{
             username : username 
+        },
+        select: {
+            id: true,
+            username: true,
+            email: true,
+            image: true,
+            desc: true
         }
     }) 
     return user;
