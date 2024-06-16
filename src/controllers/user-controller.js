@@ -97,6 +97,10 @@ router.patch("/profile/edit", verifyToken, async (req, res) => {
         const { image } = req.files;
         try {
             await updateUserProfileWithImage(userId, image, desc, req, res);
+            return res.status(200).send({
+                error: false,
+                message: "Profil berhasil diperbarui" 
+            });
         } catch (error) {
             return res.status(500).send({
                 error: true,
