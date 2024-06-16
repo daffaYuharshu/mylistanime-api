@@ -3,6 +3,7 @@ const cors = require('cors');
 const FileUpload = require("express-fileupload");
 const fs = require("fs");
 const path = require("path");
+const os = require('os');
 
 const verifyToken = require("./middleware/verifyToken");
 const routerAnime = require("./controllers/anime-controller");
