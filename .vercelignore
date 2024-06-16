@@ -1,8 +1,1 @@
-public/
-static/
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.log
 node_modules/
