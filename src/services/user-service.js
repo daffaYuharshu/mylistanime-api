@@ -84,7 +84,8 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
         throw Error("Gambar harus kurang dari 1 MB");
     }
 
-    const urlImage = await uploadImage(image, imageName);
+    const urlPath = await uploadImage(image, imageName);
+    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
     await editUserProfileWithImage(userId, {urlImage, desc})
 }
 
