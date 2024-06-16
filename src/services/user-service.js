@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const path = require("path");
 const fs = require("fs");
+const os = require('os');
 dotenv.config();
 const { findUserByEmail, findUserByUsername, insertUser, findUserProfile, editUserProfileWithImage, editUserProfileWithoutImage } = require('../repositories/user-repository');
 
