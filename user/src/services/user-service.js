@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const path = require("path");
 const fs = require("fs");
-const os = require('os');
+// const os = require('os');
+
 dotenv.config();
 const { findUserByEmail, findUserByUsername, insertUser, findUserProfile, editUserProfileWithImage, editUserProfileWithoutImage } = require('../repositories/user-repository');
 
@@ -73,7 +74,7 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
     const imageSize = image.data.length;
     const extImage = path.extname(image.name);
     const imageName = image.md5 + extImage;
-    // const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
+    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
     const allowedType = [".png", ".jpg", ".jpeg"];
 
     if(!allowedType.includes(extImage.toLowerCase())) {
@@ -84,54 +85,54 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
         throw Error("Gambar harus kurang dari 1 MB");
     }
 
-    const urlPath = await uploadImage(image, imageName);
-    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
+    await uploadImage(image, imageName);
+
     await editUserProfileWithImage(userId, {urlImage, desc})
 }
 
-// const uploadImage = (image, imageName) => {
-//     return new Promise((resolve, reject) => {
-//         const uploadPath = `./public/images/${imageName}`;
-
-//         image.mv(uploadPath, (err) => {
-//         if (err) {
-//             reject(err);
-//         } else {
-//             // Check if file exists after upload
-//             fs.access(uploadPath, fs.constants.F_OK, (err) => {
-//             if (err) {
-//                 reject(new Error('File not found after upload'));
-//             } else {
-//                 resolve();
-//             }
-//             });
-//         }
-//         });
-//     });
-// };
-
 const uploadImage = (image, imageName) => {
     return new Promise((resolve, reject) => {
-        // Gunakan direktori sementara untuk menyimpan file
-        const tempDir = os.tmpdir();
-        const uploadPath = path.join(tempDir, imageName);
+        const uploadPath = `./public/images/${imageName}`;
 
         image.mv(uploadPath, (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            // Check if file exists after upload
+            fs.access(uploadPath, fs.constants.F_OK, (err) => {
             if (err) {
-                reject(err);
+                reject(new Error('File not found after upload'));
             } else {
-                // Check if file exists after upload
-                fs.access(uploadPath, fs.constants.F_OK, (err) => {
-                    if (err) {
-                        reject(new Error('File not found after upload'));
-                    } else {
-                        resolve(uploadPath);
-                    }
-                });
+                resolve();
             }
+            });
+        }
         });
     });
 };
+
+// const uploadImage = (image, imageName) => {
+//     return new Promise((resolve, reject) => {
+//         // Gunakan direktori sementara untuk menyimpan file
+//         const tempDir = os.tmpdir();
+//         const uploadPath = path.join(tempDir, imageName);
+
+//         image.mv(uploadPath, (err) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 // Check if file exists after upload
+//                 fs.access(uploadPath, fs.constants.F_OK, (err) => {
+//                     if (err) {
+//                         reject(new Error('File not found after upload'));
+//                     } else {
+//                         resolve(uploadPath);
+//                     }
+//                 });
+//             }
+//         });
+//     });
+// };
 
 const updateUserProfileWithoutImage = async (userId, desc) => {
     await editUserProfileWithoutImage(userId, desc);

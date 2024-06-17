@@ -5,7 +5,6 @@ dotenv.config();
 
 const { register, login, getUserProfile, updateUserProfileWithImage, updateUserProfileWithoutImage } = require("../services/user-service");
 const verifyToken = require("../middleware/verifyToken");
-const { use } = require("passport");
 
 const router = express.Router();
 
@@ -67,7 +66,7 @@ router.delete("/logout",  verifyToken, async (req, res) => {
     return res.sendStatus(200);
 })
 
-router.get("/profile/:username", async (req, res) =>{
+router.get("/:username", async (req, res) =>{
     const { username } = req.params;
     try {
         const user = await getUserProfile(username);
@@ -87,7 +86,7 @@ router.get("/profile/:username", async (req, res) =>{
     }
 })
 
-router.patch("/profile/edit", verifyToken, async (req, res) => {
+router.patch("/edit", verifyToken, async (req, res) => {
     const userId = req.userId;
     if(!userId) return res.status(401);
 
