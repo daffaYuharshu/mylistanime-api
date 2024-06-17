@@ -74,7 +74,6 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
     const imageSize = image.data.length;
     const extImage = path.extname(image.name);
     const imageName = image.md5 + extImage;
-    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
     const allowedType = [".png", ".jpg", ".jpeg"];
 
     if(!allowedType.includes(extImage.toLowerCase())) {
@@ -86,7 +85,7 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
     }
 
     await uploadImage(image, imageName);
-
+    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
     await editUserProfileWithImage(userId, {urlImage, desc})
 }
 
