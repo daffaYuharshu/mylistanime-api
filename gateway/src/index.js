@@ -7,21 +7,21 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 dotenv.config();
 
-// // http://localhost:3000/ => http://localhost:3001/ USER
-// app.use("/user", createProxyMiddleware({
-//     target: process.env.USER_SERVICE,
-//     pathRewrite: {
-//         '^/user': ''
-//     }
-// }));
+// http://localhost:3000/ => http://localhost:3001/ USER
+app.use("/user", createProxyMiddleware({
+    target: `http://localhost:3001`,
+    pathRewrite: {
+        '^/user': ''
+    }
+}));
 
-// // http://localhost:3000/animes => http://localhost:3002/ ANIME
-// app.use("/animes", createProxyMiddleware({
-//     target: process.env.ANIME_SERVICE,
-//     pathRewrite: {
-//         '^/animes': ''
-//     }
-// }));
+// http://localhost:3000/animes => http://localhost:3002/ ANIME
+app.use("/animes", createProxyMiddleware({
+    target: `http://localhost:3002`,
+    pathRewrite: {
+        '^/animes': ''
+    }
+}));
 
 app.listen(port, () => {
     console.log(`API Gateway service listening on port ${port}`);

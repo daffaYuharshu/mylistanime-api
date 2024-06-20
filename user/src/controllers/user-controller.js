@@ -1,5 +1,7 @@
 const express = require("express");
 const prisma = require("../database/prisma");
+const userValidation = require("../middleware/userValidation"); 
+const { validationResult } = require("express-validator");
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -8,12 +10,20 @@ const verifyToken = require("../middleware/verifyToken");
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register",  userValidation(), async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email|| !password) {
         return res.status(400).send({
           error: "true",
           message: "Username, email atau password belum diisi",
+        });
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).send({
+            error: true,
+            message: errors.array()[0].msg
         });
     }
 
