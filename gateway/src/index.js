@@ -7,9 +7,12 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 dotenv.config();
 
+app.use(cors());
+
 // http://localhost:3000/ => http://localhost:3001/ USER
 app.use("/user", createProxyMiddleware({
     target: `http://localhost:3001`,
+    changeOrigin: true,
     pathRewrite: {
         '^/user': ''
     }
@@ -18,6 +21,7 @@ app.use("/user", createProxyMiddleware({
 // http://localhost:3000/animes => http://localhost:3002/ ANIME
 app.use("/animes", createProxyMiddleware({
     target: `http://localhost:3002`,
+    changeOrigin: true,
     pathRewrite: {
         '^/animes': ''
     }
