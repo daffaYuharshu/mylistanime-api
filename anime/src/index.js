@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use("/animes", routerAnime);
+app.use("/", routerAnime);
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);

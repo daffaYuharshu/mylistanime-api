@@ -85,53 +85,54 @@ const updateUserProfileWithImage = async (userId, image, desc, req, res) => {
     }
 
     await uploadImage(image, imageName);
-    const urlImage = `${req.protocol}://${req.get("host")}/images/${imageName}`;
+    const urlImage = `${req.protocol}://${req.get("host")}/user/images/${imageName}`;
+    // const urlImage = `${req.protocol}://${req.get("host")}/user/images/${imageName}`;
     await editUserProfileWithImage(userId, {urlImage, desc})
 }
 
-// const uploadImage = (image, imageName) => {
-//     return new Promise((resolve, reject) => {
-//         const uploadPath = `./public/images/${imageName}`;
-
-//         image.mv(uploadPath, (err) => {
-//         if (err) {
-//             reject(err);
-//         } else {
-//             // Check if file exists after upload
-//             fs.access(uploadPath, fs.constants.F_OK, (err) => {
-//             if (err) {
-//                 reject(new Error('File not found after upload'));
-//             } else {
-//                 resolve();
-//             }
-//             });
-//         }
-//         });
-//     });
-// };
-
 const uploadImage = (image, imageName) => {
     return new Promise((resolve, reject) => {
-        // Gunakan direktori sementara untuk menyimpan file
-        const tempDir = os.tmpdir();
-        const uploadPath = path.join(tempDir, imageName);
+        const uploadPath = `./public/images/${imageName}`;
 
         image.mv(uploadPath, (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            // Check if file exists after upload
+            fs.access(uploadPath, fs.constants.F_OK, (err) => {
             if (err) {
-                reject(err);
+                reject(new Error('File not found after upload'));
             } else {
-                // Check if file exists after upload
-                fs.access(uploadPath, fs.constants.F_OK, (err) => {
-                    if (err) {
-                        reject(new Error('File not found after upload'));
-                    } else {
-                        resolve(uploadPath);
-                    }
-                });
+                resolve();
             }
+            });
+        }
         });
     });
 };
+
+// const uploadImage = (image, imageName) => {
+//     return new Promise((resolve, reject) => {
+//         // Gunakan direktori sementara untuk menyimpan file
+//         const tempDir = os.tmpdir();
+//         const uploadPath = path.join(tempDir, imageName);
+
+//         image.mv(uploadPath, (err) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 // Check if file exists after upload
+//                 fs.access(uploadPath, fs.constants.F_OK, (err) => {
+//                     if (err) {
+//                         reject(new Error('File not found after upload'));
+//                     } else {
+//                         resolve(uploadPath);
+//                     }
+//                 });
+//             }
+//         });
+//     });
+// };
 
 const updateUserProfileWithoutImage = async (userId, desc) => {
     await editUserProfileWithoutImage(userId, desc);

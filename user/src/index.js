@@ -27,7 +27,7 @@ if (!fs.existsSync(imagesDir)) {
 }
 
 app.use("/", routerUser);
-app.use('/images', express.static(os.tmpdir()));
+// app.use('/images', express.static(os.tmpdir()));
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
